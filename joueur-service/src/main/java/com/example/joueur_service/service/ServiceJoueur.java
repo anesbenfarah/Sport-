@@ -4,19 +4,28 @@ import com.example.joueur_service.entity.Joueur;
 import com.example.joueur_service.repository.JoueurRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
-public class ServiceJoueur implements IServiceJoueur{
-    JoueurRepository joueurRepository;
+public class ServiceJoueur implements IServiceJoueur {
+
+    private JoueurRepository joueurRepository;
 
     @Override
     public Joueur addJoueur(Joueur joueur) {
         return joueurRepository.save(joueur);
     }
+
     @Override
     public List<Joueur> getAllJoueurs() {
         return joueurRepository.findAll();
     }
 
+    @Override
+    public Optional<Joueur> getJoueurById(int id) {
+        return joueurRepository.findById(id);
+    }
 }

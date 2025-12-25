@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -22,5 +23,10 @@ public class JoueurRestController {
     @GetMapping("all")
     public List<Joueur> all(){
         return iServiceJoueur.getAllJoueurs();
+    }
+
+    @GetMapping("{id}")
+    public Optional<Joueur> find(@PathVariable int id){
+        return iServiceJoueur.getJoueurById(id);
     }
 }

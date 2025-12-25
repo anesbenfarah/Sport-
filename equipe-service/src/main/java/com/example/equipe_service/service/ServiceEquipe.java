@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
 public class ServiceEquipe implements IServiceEquipe {
@@ -19,6 +21,10 @@ public class ServiceEquipe implements IServiceEquipe {
     @Override
     public List<Equipe> getAllEquipe() {
         return equipeRepository.findAll();
+    }
+    @Override
+    public Optional<Equipe> getEquipeById(int id) {
+        return equipeRepository.findById(id);
     }
 
 }

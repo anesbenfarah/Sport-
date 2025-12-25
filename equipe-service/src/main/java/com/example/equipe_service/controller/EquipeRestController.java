@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -23,5 +24,9 @@ public class EquipeRestController {
     @GetMapping("all")
     public List<Equipe> all(){
         return iServiceEquipe.getAllEquipe();
+    }
+    @GetMapping("{id}")
+    public Optional<Equipe> find(@PathVariable int id){
+        return iServiceEquipe.getEquipeById(id);
     }
 }
