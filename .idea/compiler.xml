@@ -11,7 +11,7 @@
         <module name="discovery-service" />
         <module name="config-service" />
       </profile>
-      <profile name="Annotation profile for contract-service" enabled="true">
+      <profile name="Annotation profile for equipe-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -19,19 +19,25 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
         <module name="joueur-service" />
-        <module name="contract-service" />
+        <module name="auth-service" />
         <module name="equipe-service" />
+        <module name="contract-service" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="security-service" target="17" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="auth-service" options="-parameters" />
       <module name="config-service" options="-parameters" />
       <module name="contract-service" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="equipe-service" options="-parameters" />
       <module name="gateway-service" options="-parameters" />
       <module name="joueur-service" options="-parameters" />
+      <module name="security-service" options="-parameters" />
     </option>
   </component>
 </project>

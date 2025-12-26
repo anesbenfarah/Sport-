@@ -1,12 +1,13 @@
 package com.example.contract_service.service;
+import com.example.contract_service.dto.ContratRequestDTO;
+import com.example.contract_service.dto.ContratResponseDTO;
 
-import com.example.contract_service.entity.Contrat;
 import java.util.List;
 
 public interface IServiceContrat {
-    Contrat createContrat(Contrat contrat);
-    List<Contrat> getAllContrats();
-    Contrat getContratById(int id);
-    Contrat updateContrat(int id, Contrat contrat);
+    ContratResponseDTO createContrat(ContratRequestDTO dto);
+    List<ContratResponseDTO> getAllContrats();
+    ContratResponseDTO getContratById(int id);
+    ContratResponseDTO updateContrat(int id, ContratRequestDTO dto);
     void deleteContrat(int id);
 }

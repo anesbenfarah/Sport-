@@ -1,59 +1,60 @@
 package com.example.contract_service.controller;
 
+import com.example.contract_service.dto.ContratRequestDTO;
+import com.example.contract_service.dto.ContratResponseDTO;
 import com.example.contract_service.entity.Contrat;
 import com.example.contract_service.service.IServiceContrat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/contrats")
 public class ContratRestController {
 
     @Autowired
-    private IServiceContrat iServiceContrat;
+    private IServiceContrat service;
 
-    // 📋 Tous les contrats (déjà enrichis avec joueur et équipe)
     @GetMapping
-    public List<Contrat> getAllContrats() {
-        return iServiceContrat.getAllContrats();
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public List<ContratResponseDTO> getAll() {
+        return service.getAllContrats();
     }
 
-    // 🔍 Un contrat par ID (déjà enrichi)
     @GetMapping("/{id}")
-    public ResponseEntity<Contrat> getContratById(@PathVariable int id) {
-        Contrat contrat = iServiceContrat.getContratById(id);
-        return contrat != null ? ResponseEntity.ok(contrat) : ResponseEntity.notFound().build();
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<ContratResponseDTO> getById(@PathVariable int id) {
+        ContratResponseDTO dto = service.getContratById(id);
+        return dto != null ? ResponseEntity.ok(dto) : ResponseEntity.notFound().build();
     }
 
-    // ➕ Créer un nouveau contrat
     @PostMapping
-    public ResponseEntity<?> createContrat(@RequestBody Contrat contrat) {
-        Contrat saved = iServiceContrat.createContrat(contrat);
-
-        if (saved == null) {
-            return new ResponseEntity<>(
-                    "Joueur ou Équipe introuvable",
-                    HttpStatus.BAD_REQUEST);
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<?> create(@RequestBody ContratRequestDTO dto) {
+        ContratResponseDTO created = service.createContrat(dto);
+        if (created == null) {
+            return ResponseEntity.badRequest().body("Joueur ou Équipe introuvable");
         }
-
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(created);
     }
 
-    // ✏️ Mettre à jour un contrat
     @PutMapping("/{id}")
-    public ResponseEntity<Contrat> updateContrat(@PathVariable int id, @RequestBody Contrat contrat) {
-        Contrat updated = iServiceContrat.updateContrat(id, contrat);
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<ContratResponseDTO> update(
+            @PathVariable int id,
+            @RequestBody ContratRequestDTO dto) {
+
+        ContratResponseDTO updated = service.updateContrat(id, dto);
         return updated != null ? ResponseEntity.ok(updated) : ResponseEntity.notFound().build();
     }
 
-    // 🗑️ Supprimer un contrat
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteContrat(@PathVariable int id) {
-        iServiceContrat.deleteContrat(id);
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> delete(@PathVariable int id) {
+        service.deleteContrat(id);
         return ResponseEntity.noContent().build();
     }
 }

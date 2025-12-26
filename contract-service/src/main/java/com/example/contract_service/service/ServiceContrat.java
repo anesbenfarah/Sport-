@@ -2,7 +2,10 @@ package com.example.contract_service.service;
 
 import com.example.contract_service.clients.EquipeClient;
 import com.example.contract_service.clients.JoueurClient;
+import com.example.contract_service.dto.ContratRequestDTO;
+import com.example.contract_service.dto.ContratResponseDTO;
 import com.example.contract_service.entity.Contrat;
+import com.example.contract_service.mapper.ContratMapper;
 import com.example.contract_service.model.Equipe;
 import com.example.contract_service.model.Joueur;
 import com.example.contract_service.repository.ContratRepository;
@@ -23,67 +26,61 @@ public class ServiceContrat implements IServiceContrat {
     private final EquipeClient equipeClient;
 
     @Override
-    public Contrat createContrat(Contrat contrat) {
-        // Vérification que le joueur et l'équipe existent
-        Optional<Joueur> joueurOpt = Optional.ofNullable(joueurClient.getJoueurById(contrat.getJoueurId()));
-        Optional<Equipe> equipeOpt = Optional.ofNullable(equipeClient.getEquipeById(contrat.getEquipeId()));
+    public ContratResponseDTO createContrat(ContratRequestDTO dto) {
 
-        if (joueurOpt.isEmpty() || equipeOpt.isEmpty()) {
-            log.warn("Création contrat échouée : joueurId {} ou equipeId {} introuvable", contrat.getJoueurId(), contrat.getEquipeId());
-            return null; // Le controller renverra BAD_REQUEST
+        // Vérification existence joueur / équipe
+        Joueur joueur = joueurClient.getJoueurById(dto.getJoueurId());
+        Equipe equipe = equipeClient.getEquipeById(dto.getEquipeId());
+
+        if (joueur == null || equipe == null) {
+            return null;
         }
 
-        // Sauvegarde
+        Contrat contrat = ContratMapper.toEntity(dto);
         Contrat saved = contratRepository.save(contrat);
 
-        // Enrichissement immédiat après création
         enrichirContrat(saved);
-
-        return saved;
+        return ContratMapper.toDTO(saved);
     }
 
     @Override
-    public List<Contrat> getAllContrats() {
-        List<Contrat> contrats = contratRepository.findAll();
-        contrats.forEach(this::enrichirContrat);
-        return contrats;
+    public List<ContratResponseDTO> getAllContrats() {
+        return contratRepository.findAll()
+                .stream()
+                .peek(this::enrichirContrat)
+                .map(ContratMapper::toDTO)
+                .toList();
     }
 
     @Override
-    public Contrat getContratById(int id) {
-        Optional<Contrat> optional = contratRepository.findById(id);
-        if (optional.isPresent()) {
-            Contrat contrat = optional.get();
-            enrichirContrat(contrat);
-            return contrat;
-        }
-        return null;
+    public ContratResponseDTO getContratById(int id) {
+        return contratRepository.findById(id)
+                .map(contrat -> {
+                    enrichirContrat(contrat);
+                    return ContratMapper.toDTO(contrat);
+                })
+                .orElse(null);
     }
 
     @Override
-    public Contrat updateContrat(int id, Contrat contratDetails) {
-        if (!contratRepository.existsById(id)) {
-            return null;
-        }
+    public ContratResponseDTO updateContrat(int id, ContratRequestDTO dto) {
 
-        // Optionnel : vérifier à nouveau joueur et équipe lors de mise à jour
-        Optional<Joueur> joueurOpt = Optional.ofNullable(joueurClient.getJoueurById(contratDetails.getJoueurId()));
-        Optional<Equipe> equipeOpt = Optional.ofNullable(equipeClient.getEquipeById(contratDetails.getEquipeId()));
+        if (!contratRepository.existsById(id)) return null;
 
-        if (joueurOpt.isEmpty() || equipeOpt.isEmpty()) {
-            return null;
-        }
+        Contrat contrat = ContratMapper.toEntity(dto);
+        contrat.setId(id);
 
-        contratDetails.setId(id);
-        Contrat updated = contratRepository.save(contratDetails);
+        Contrat updated = contratRepository.save(contrat);
         enrichirContrat(updated);
-        return updated;
+
+        return ContratMapper.toDTO(updated);
     }
 
     @Override
     public void deleteContrat(int id) {
-        contratRepository.deleteById(id);
+
     }
+
 
     // Méthode privée d'enrichissement
     private void enrichirContrat(Contrat contrat) {
