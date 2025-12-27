@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 @AllArgsConstructor
@@ -28,7 +28,7 @@ public class ServiceContrat implements IServiceContrat {
     @Override
     public ContratResponseDTO createContrat(ContratRequestDTO dto) {
 
-        // Vérification existence joueur / équipe
+
         Joueur joueur = joueurClient.getJoueurById(dto.getJoueurId());
         Equipe equipe = equipeClient.getEquipeById(dto.getEquipeId());
 
@@ -82,7 +82,7 @@ public class ServiceContrat implements IServiceContrat {
     }
 
 
-    // Méthode privée d'enrichissement
+
     private void enrichirContrat(Contrat contrat) {
         if (contrat == null) return;
 

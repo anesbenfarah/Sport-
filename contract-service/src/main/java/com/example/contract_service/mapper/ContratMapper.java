@@ -6,7 +6,7 @@ import com.example.contract_service.entity.Contrat;
 
 public class ContratMapper {
 
-    // DTO → Entity
+
     public static Contrat toEntity(ContratRequestDTO dto) {
         return new Contrat(
                 0,
@@ -20,7 +20,7 @@ public class ContratMapper {
         );
     }
 
-    // Entity → DTO
+
     public static ContratResponseDTO toDTO(Contrat contrat) {
         return new ContratResponseDTO(
                 contrat.getId(),

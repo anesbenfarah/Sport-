@@ -16,11 +16,11 @@ public class FeignClientConfiguration {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (authentication != null && authentication.getCredentials() instanceof String) {
-                // Cas où le token est dans credentials (parfois selon config)
+
                 String token = (String) authentication.getCredentials();
                 requestTemplate.header("Authorization", "Bearer " + token);
             } else if (authentication != null && authentication.getPrincipal() instanceof Jwt) {
-                // Cas standard avec oauth2-resource-server
+
                 Jwt jwt = (Jwt) authentication.getPrincipal();
                 requestTemplate.header("Authorization", "Bearer " + jwt.getTokenValue());
             }
